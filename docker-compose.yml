@@ -5,9 +5,27 @@ services:
     restart: always
     ports:
       - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - /etc/letsencrypt:/etc/letsencrypt:ro
     networks:
       - monitoring
+    depends_on:
+      - ghost
 
+  ghost:
+    image: ghost:5
+    container_name: ghost
+    restart: always
+    environment:
+      url: https://bafix.duckdns.org
+      database__client: sqlite3
+      database__connection__filename: /var/lib/ghost/content/data/ghost.db
+    volumes:
+      - ghost-data:/var/lib/ghost/content
+    networks:
+      - monitoring
 
   uptime-kuma:
     image: louislam/uptime-kuma:1
@@ -19,8 +37,10 @@ services:
       - uptime-kuma:/app/data
     networks:
       - monitoring
+
 networks:
   monitoring:
 
-volumes: 
+volumes:
+  ghost-data:
   uptime-kuma:
