@@ -1,0 +1,26 @@
+services:
+  nginx:
+    image: nginx
+    container_name: mon-serveur-web
+    restart: always
+    ports:
+      - "80:80"
+    networks:
+      - monitoring
+
+
+  uptime-kuma:
+    image: louislam/uptime-kuma:1
+    container_name: uptime-kuma
+    restart: always
+    ports:
+      - "127.0.0.1:3001:3001"
+    volumes:
+      - uptime-kuma:/app/data
+    networks:
+      - monitoring
+networks:
+  monitoring:
+
+volumes: 
+  uptime-kuma:
